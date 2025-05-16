@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Scrolling Platformer</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #222;
+    }
+    canvas {
+      display: block;
+      background: linear-gradient(to top, #444, #88c);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const keys = {
+      left: false,
+      right: false,
+      up: false
+    };
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') keys.left = true;
+      if (e.key === 'ArrowRight') keys.right = true;
+      if (e.key === 'ArrowUp') keys.up = true;
+    });
+
+    document.addEventListener('keyup', e => {
+      if (e.key === 'ArrowLeft') keys.left = false;
+      if (e.key === 'ArrowRight') keys.right = false;
+      if (e.key === 'ArrowUp') keys.up = false;
+    });
+
+    const gravity = 0.5;
+    const friction = 0.9;
+
+    const player = {
+      x: 100,
+      y: 100,
+      width: 30,
+      height: 50,
+      dx: 0,
+      dy: 0,
+      speed: 3,
+      jumpPower: -10,
+      onGround: false
+    };
+
+    const platforms = [
+      { x: 0, y: 350, width: 1000, height: 50 },
+      { x: 300, y: 280, width: 100, height: 10 },
+      { x: 450, y: 220, width: 100, height: 10 },
+      { x: 600, y: 180, width: 100, height: 10 },
+      { x: 800, y: 320, width: 150, height: 10 },
+      { x: 1050, y: 270, width: 100, height: 10 }
+    ];
+
+    let cameraOffsetX = 0;
+
+    function update() {
+      player.onGround = false;
+
+      // Horizontal movement
+      if (keys.left) player.dx = -player.speed;
+      if (keys.right) player.dx = player.speed;
+      if (!keys.left && !keys.right) player.dx *= friction;
+
+      // Jump
+      if (keys.up && player.onGround) {
+        player.dy = player.jumpPower;
+        player.onGround = false;
+      }
+
+      // Gravity
+      player.dy += gravity;
+
+      // Move player
+      player.x += player.dx;
+      player.y += player.dy;
+
+      // Platform collision
+      for (let plat of platforms) {
+        if (
+          player.x < plat.x + plat.width &&
+          player.x + player.width > plat.x &&
+          player.y + player.height < plat.y + 10 &&
+          player.y + player.height + player.dy >= plat.y
+        ) {
+          player.y = plat.y - player.height;
+          player.dy = 0;
+          player.onGround = true;
+        }
+      }
+
+      // Camera follows player
+      cameraOffsetX = player.x - canvas.width / 2 + player.width / 2;
+
+      // Prevent player from falling below canvas
+      if (player.y > canvas.height) {
+        player.x = 100;
+        player.y = 100;
+        player.dy = 0;
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.translate(-cameraOffsetX, 0);
+
+      // Draw platforms
+      ctx.fillStyle = '#654321';
+      for (let plat of platforms) {
+        ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
+      }
+
+      // Draw player
+      ctx.fillStyle = '#ff0';
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      ctx.restore();
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
+</html>
