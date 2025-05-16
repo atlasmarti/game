@@ -8,11 +8,11 @@
     body {
       margin: 0;
       overflow: hidden;
-      background: #222;
+      background: #242;
     }
     canvas {
       display: block;
-      background: linear-gradient(to top, #444, #88c);
+      background: linear-gradient(to top, #644, #89c);
     }
   </style>
 </head>
@@ -42,18 +42,18 @@
     });
 
     const gravity = 0.5;
-    const friction = 0.9;
+    const friction = 0.8;
 
     const player = {
       x: 100,
       y: 100,
-      width: 30,
-      height: 50,
+      width: 40,
+      height: 40,
       dx: 0,
       dy: 0,
       speed: 3,
       jumpPower: -10,
-      onGround: false
+      canJump: false
     };
 
     const platforms = [
@@ -68,48 +68,53 @@
     let cameraOffsetX = 0;
 
     function update() {
-      player.onGround = false;
-
       // Horizontal movement
-      if (keys.left) player.dx = -player.speed;
-      if (keys.right) player.dx = player.speed;
-      if (!keys.left && !keys.right) player.dx *= friction;
-
-      // Jump
-      if (keys.up && player.onGround) {
-        player.dy = player.jumpPower;
-        player.onGround = false;
+      if (keys.left) {
+        player.dx = -player.speed;
+      } else if (keys.right) {
+        player.dx = player.speed;
+      } else {
+        player.dx *= friction;
       }
 
-      // Gravity
+      // Apply gravity
       player.dy += gravity;
+
+      // Jumping
+      if (keys.up && player.canJump) {
+        player.dy = player.jumpPower;
+        player.canJump = false;
+      }
 
       // Move player
       player.x += player.dx;
       player.y += player.dy;
 
-      // Platform collision
+      // Collision with platforms
+      player.canJump = false;
       for (let plat of platforms) {
+        // AABB collision
         if (
           player.x < plat.x + plat.width &&
           player.x + player.width > plat.x &&
-          player.y + player.height < plat.y + 10 &&
+          player.y + player.height <= plat.y + player.dy &&
           player.y + player.height + player.dy >= plat.y
         ) {
           player.y = plat.y - player.height;
           player.dy = 0;
-          player.onGround = true;
+          player.canJump = true;
         }
       }
 
       // Camera follows player
       cameraOffsetX = player.x - canvas.width / 2 + player.width / 2;
 
-      // Prevent player from falling below canvas
+      // Reset if falls below canvas
       if (player.y > canvas.height) {
         player.x = 100;
         player.y = 100;
         player.dy = 0;
+        player.dx = 0;
       }
     }
 
