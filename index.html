@@ -8,7 +8,7 @@
     body {
       margin: 0;
       overflow: hidden;
-      background: #242;
+      background: #000;
     }
     canvas {
       display: block;
@@ -18,28 +18,14 @@
 </head>
 <body>
   <canvas id="gameCanvas" width="1600" height="800"></canvas>
-
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    const keys = {
-      left: false,
-      right: false,
-      up: false
-    };
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'ArrowLeft') keys.left = true;
-      if (e.key === 'ArrowRight') keys.right = true;
-      if (e.key === 'ArrowUp') keys.up = true;
-    });
-
-    document.addEventListener('keyup', e => {
-      if (e.key === 'ArrowLeft') keys.left = false;
-      if (e.key === 'ArrowRight') keys.right = false;
-      if (e.key === 'ArrowUp') keys.up = false;
-    });
+    const keys = { left: false, right: false, up: false };
+    let jumpPressed = false;
+    let lives = 3;
+    let currentLevel = 0;
 
     const gravity = 0.5;
     const friction = 0.8;
@@ -51,90 +37,221 @@
       height: 40,
       dx: 0,
       dy: 0,
-      speed: 3,
-      jumpPower: -10,
+      speed: 4,
+      jumpPower: -12,
       canJump: false
     };
 
-    const platforms = [
-      { x: 0, y: 350, width: 1000, height: 50 },
-      { x: 300, y: 280, width: 100, height: 10 },
-      { x: 450, y: 220, width: 100, height: 10 },
-      { x: 600, y: 180, width: 100, height: 10 },
-      { x: 800, y: 320, width: 150, height: 10 },
-      { x: 1050, y: 270, width: 100, height: 10 }
+    const levels = [
+      {
+        platforms: [
+          { x: 0, y: 350, width: 1000, height: 50 },
+          { x: 300, y: 280, width: 100, height: 10 },
+          { x: 450, y: 220, width: 100, height: 10 },
+          { x: 600, y: 180, width: 100, height: 10 },
+          { x: 800, y: 320, width: 150, height: 10 },
+          { x: 1050, y: 270, width: 100, height: 10 }
+        ],
+        goal: { x: 1150, y: 220, width: 40, height: 60 },
+        spikes: [{ x: 700, y: 350, width: 40, height: 20 }]
+      },
+      {
+        platforms: [
+          { x: 0, y: 400, width: 1200, height: 50 },
+          { x: 250, y: 340, width: 100, height: 10 },
+          { x: 400, y: 300, width: 100, height: 10 },
+          { x: 550, y: 250, width: 100, height: 10 },
+          { x: 700, y: 200, width: 100, height: 10 },
+          { x: 850, y: 160, width: 100, height: 10 }
+        ],
+        goal: { x: 1000, y: 100, width: 40, height: 60 },
+        spikes: [{ x: 600, y: 400, width: 40, height: 20 }]
+      }
     ];
 
     let cameraOffsetX = 0;
 
-    function update() {
-      // Horizontal movement
-      if (keys.left) {
-        player.dx = -player.speed;
-      } else if (keys.right) {
-        player.dx = player.speed;
-      } else {
-        player.dx *= friction;
-      }
-
-      // Apply gravity
-      player.dy += gravity;
-
-      // Jumping
-      if (keys.up && player.canJump) {
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft') keys.left = true;
+      if (e.key === 'ArrowRight') keys.right = true;
+      if (e.key === 'ArrowUp' && !jumpPressed && player.canJump) {
         player.dy = player.jumpPower;
         player.canJump = false;
+        jumpPressed = true;
       }
+    });
 
-      // Move player
+    document.addEventListener('keyup', e => {
+      if (e.key === 'ArrowLeft') keys.left = false;
+      if (e.key === 'ArrowRight') keys.right = false;
+      if (e.key === 'ArrowUp') jumpPressed = false;
+    });
+
+    function resetPlayer() {
+      player.x = 100;
+      player.y = 100;
+      player.dx = 0;
+      player.dy = 0;
+    }
+
+    function nextLevel() {
+      currentLevel++;
+      if (currentLevel >= levels.length) {
+        alert("🎉 You completed all levels!");
+        currentLevel = 0;
+      }
+      resetPlayer();
+    }
+
+    function loseLife() {
+      lives--;
+      if (lives <= 0) {
+        alert("💀 Game Over!");
+        lives = 3;
+        currentLevel = 0;
+      }
+      resetPlayer();
+    }
+
+    function checkCollisions() {
+      const level = levels[currentLevel];
+      const platforms = level.platforms;
+      const spikes = level.spikes;
+
+      // Horizontal
       player.x += player.dx;
-      player.y += player.dy;
-
-      // Collision with platforms
-      player.canJump = false;
       for (let plat of platforms) {
-        // AABB collision
         if (
           player.x < plat.x + plat.width &&
           player.x + player.width > plat.x &&
-          player.y + player.height <= plat.y + player.dy &&
-          player.y + player.height + player.dy >= plat.y
+          player.y < plat.y + plat.height &&
+          player.y + player.height > plat.y
         ) {
-          player.y = plat.y - player.height;
-          player.dy = 0;
-          player.canJump = true;
+          if (player.dx > 0) {
+            player.x = plat.x - player.width;
+          } else if (player.dx < 0) {
+            player.x = plat.x + plat.width;
+          }
+          player.dx = 0;
         }
       }
 
-      // Camera follows player
-      cameraOffsetX = player.x - canvas.width / 2 + player.width / 2;
-
-      // Reset if falls below canvas
-      if (player.y > canvas.height) {
-        player.x = 100;
-        player.y = 100;
-        player.dy = 0;
-        player.dx = 0;
+      // Vertical
+      player.y += player.dy;
+      player.canJump = false;
+      for (let plat of platforms) {
+        if (
+          player.x < plat.x + plat.width &&
+          player.x + player.width > plat.x &&
+          player.y < plat.y + plat.height &&
+          player.y + player.height > plat.y
+        ) {
+          if (player.dy > 0) {
+            player.y = plat.y - player.height;
+            player.dy = 0;
+            player.canJump = true;
+          } else if (player.dy < 0) {
+            player.y = plat.y + plat.height;
+            player.dy = 0;
+          }
+        }
       }
+
+      // Spike collision
+      for (let spike of spikes) {
+        if (
+          player.x < spike.x + spike.width &&
+          player.x + player.width > spike.x &&
+          player.y < spike.y + spike.height &&
+          player.y + player.height > spike.y
+        ) {
+          loseLife();
+        }
+      }
+
+      // Goal collision
+      const goal = level.goal;
+      if (
+        player.x < goal.x + goal.width &&
+        player.x + player.width > goal.x &&
+        player.y < goal.y + goal.height &&
+        player.y + player.height > goal.y
+      ) {
+        nextLevel();
+      }
+
+      // Fall off screen
+      if (player.y > canvas.height) {
+        loseLife();
+      }
+    }
+
+    function update() {
+      if (keys.left) player.dx = -player.speed;
+      else if (keys.right) player.dx = player.speed;
+      else player.dx *= friction;
+
+      player.dy += gravity;
+
+      checkCollisions();
+      cameraOffsetX = player.x - canvas.width / 2 + player.width / 2;
+    }
+
+    function drawParallax() {
+      const layer1 = cameraOffsetX * 0.5;
+      const layer2 = cameraOffsetX * 0.2;
+
+      ctx.fillStyle = '#113';
+      ctx.fillRect(-layer2, 0, canvas.width * 2, canvas.height);
+      ctx.fillStyle = '#225';
+      ctx.fillRect(-layer1, canvas.height - 300, canvas.width * 2, 300);
     }
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       ctx.save();
       ctx.translate(-cameraOffsetX, 0);
 
-      // Draw platforms
+      drawParallax();
+
+      const level = levels[currentLevel];
+
+      // Platforms
       ctx.fillStyle = '#654321';
-      for (let plat of platforms) {
+      for (let plat of level.platforms) {
         ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
       }
 
-      // Draw player
+      // Spikes
+      ctx.fillStyle = '#c00';
+      for (let spike of level.spikes) {
+        ctx.beginPath();
+        ctx.moveTo(spike.x, spike.y + spike.height);
+        ctx.lineTo(spike.x + spike.width / 2, spike.y);
+        ctx.lineTo(spike.x + spike.width, spike.y + spike.height);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Goal
+      const goal = level.goal;
+      ctx.fillStyle = '#0f0';
+      ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
+      ctx.fillStyle = '#fff';
+      ctx.font = '16px sans-serif';
+      ctx.fillText('🏁', goal.x + 5, goal.y + 40);
+
+      // Player
       ctx.fillStyle = '#ff0';
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
       ctx.restore();
+
+      // HUD
+      ctx.fillStyle = '#fff';
+      ctx.font = '20px sans-serif';
+      ctx.fillText(`❤️ Lives: ${lives}`, 20, 30);
+      ctx.fillText(`Level ${currentLevel + 1}/${levels.length}`, 20, 60);
     }
 
     function gameLoop() {
@@ -144,6 +261,4 @@
     }
 
     gameLoop();
-  </script>
-</body>
-</html>
+ 
