@@ -12,7 +12,7 @@
     }
     canvas {
       display: block;
-      background: linear-gradient(to top, #1, #1);
+      background: linear-gradient(to top, #000, #000);
     }
   </style>
 </head>
@@ -237,9 +237,6 @@
       const goal = level.goal;
       ctx.fillStyle = '#0f0';
       ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
-      ctx.fillStyle = '#fff';
-      ctx.font = '16px sans-serif';
-      ctx.fillText('🏁', goal.x + 5, goal.y + 40);
 
       // Player
       ctx.fillStyle = '#ff0';
