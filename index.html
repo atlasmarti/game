@@ -12,13 +12,12 @@
     }
     canvas {
       display: block;
-      background: linear-gradient(to top, #644, #89c);
-      background: linear-gradient(to top, #1, #1);
+      background: linear-gradient(to top, #000, #000);
+      background: linear-gradient(to top, #0, #0);
     }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="1600" height="800"></canvas>
   <canvas id="gameCanvas" width="1080" height="920"></canvas>
   <script>
     const canvas = document.getElementById('gameCanvas');
@@ -55,7 +54,6 @@
           { x: 1050, y: 270, width: 100, height: 10 }
         ],
         goal: { x: 1150, y: 220, width: 40, height: 60 },
-        spikes: [{ x: 700, y: 350, width: 40, height: 20 }]
         spikes: [{ x: 700, y: 350-20, width: 40, height: 20 }]
       },
       {
@@ -68,8 +66,19 @@
           { x: 850, y: 160, width: 100, height: 10 }
         ],
         goal: { x: 1000, y: 100, width: 40, height: 60 },
-        spikes: [{ x: 600, y: 400, width: 40, height: 20 }]
         spikes: [{ x: 600, y: 400-20, width: 40, height: 20 }]
+      },
+      {
+        platforms: [
+          { x: 0, y: 400, width: 1200, height: 50 },
+          { x: 250, y: 340, width: 100, height: 10 },
+          { x: 400, y: 300, width: 10, height: 10 },
+          { x: 650, y: 440, width: 20, height: 30 },
+          { x: 800, y: 120, width: 100, height: 10 },
+          { x: 850, y: 160, width: 100, height: 10 }
+        ],
+        goal: { x: 1000, y: 360, width: 10, height: 10 },
+        spikes: [{ x: 800, y: 120-20, width: 40, height: 20 }]
       }
     ];
 
@@ -221,7 +230,7 @@
       const level = levels[currentLevel];
 
       // Platforms
-      ctx.fillStyle = '#654321';
+      ctx.fillStyle = '#132';
       for (let plat of level.platforms) {
         ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
       }
@@ -241,12 +250,9 @@
       const goal = level.goal;
       ctx.fillStyle = '#0f0';
       ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
-      ctx.fillStyle = '#fff';
-      ctx.font = '16px sans-serif';
-      ctx.fillText('🏁', goal.x + 5, goal.y + 40);
 
       // Player
-      ctx.fillStyle = '#ff0';
+      ctx.fillStyle = '#ff5';
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
       ctx.restore();
