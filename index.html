@@ -8,13 +8,10 @@
     body {
       margin: 0;
       overflow: hidden;
-      background: #000;
       background: #fffafa;
     }
     canvas {
       display: block;
-      background: linear-gradient(to top, #000, #000);
-      background: linear-gradient(to top, #0, #0);
       background: linear-gradient(to top, #fffafa, #fffafa);
       background: linear-gradient(to top, #fffafa, #fffafa);
     }
@@ -215,14 +212,12 @@
       const level = levels[currentLevel];
 
       // Platforms
-      ctx.fillStyle = '#132';
       ctx.fillStyle = '#708090';
       for (let plat of level.platforms) {
         ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
       }
 
       // Spikes
-      ctx.fillStyle = '#c00';
       ctx.fillStyle = '#ff6347';
       for (let spike of level.spikes) {
         ctx.beginPath();
@@ -235,7 +230,6 @@
 
       // Goal
       const goal = level.goal;
-      ctx.fillStyle = '#0f0';
       ctx.fillStyle = '#00ff7f';
       ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
 
