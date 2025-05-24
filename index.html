@@ -8,11 +8,12 @@
     body {
       margin: 0;
       overflow: hidden;
-      background: #113;
+      background: #fffafa;
     }
     canvas {
       display: block;
-      background: #113;
+      background: linear-gradient(to top, #fffafa, #fffafa);
+    }
   </style>
 </head>
 <body>
@@ -27,7 +28,7 @@
     let currentLevel = 0;
 
     const gravity = 0.5;
-    const friction = 0.8;
+    const friction = 1;
 
     const player = {
       x: 100,
@@ -36,7 +37,7 @@
       height: 40,
       dx: 0,
       dy: 0,
-      speed: 3,
+      speed: 4,
       jumpPower: -12,
       canJump: false
     };
