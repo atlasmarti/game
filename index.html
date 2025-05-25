@@ -8,16 +8,20 @@
     body {
       margin: 0;
       overflow: hidden;
+      background: #000;
       background: #fffafa;
     }
     canvas {
       display: block;
+      background: linear-gradient(to top, #000, #000);
+      background: linear-gradient(to top, #0, #0);
+      background: linear-gradient(to top, #fffafa, #fffafa);
       background: linear-gradient(to top, #fffafa, #fffafa);
     }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="100%" height="100%"></canvas>
+  <canvas id="gameCanvas" width="1080" height="920"></canvas>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
@@ -37,7 +41,7 @@
       height: 40,
       dx: 0,
       dy: 0,
-      speed: 3,
+      speed: 4,
       jumpPower: -12,
       canJump: false
     };
@@ -54,6 +58,13 @@
         ],
         goal: { x: 1150, y: 220, width: 40, height: 60 },
         spikes: [{ x: 700, y: 350-20, width: 40, height: 20 }]
+      },
+      {
+        platforms: [
+          { x: 0, y: 400, width: 1200, height: 50 },
+@@ -80,196 +80,196 @@
+        goal: { x: 1000, y: 360, width: 10, height: 10 },
+        spikes: [{ x: 800, y: 120-20, width: 40, height: 20 }]
       }
     ];
 
@@ -205,12 +216,14 @@
       const level = levels[currentLevel];
 
       // Platforms
+      ctx.fillStyle = '#132';
       ctx.fillStyle = '#708090';
       for (let plat of level.platforms) {
         ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
       }
 
       // Spikes
+      ctx.fillStyle = '#c00';
       ctx.fillStyle = '#ff6347';
       for (let spike of level.spikes) {
         ctx.beginPath();
@@ -223,6 +236,7 @@
 
       // Goal
       const goal = level.goal;
+      ctx.fillStyle = '#0f0';
       ctx.fillStyle = '#00ff7f';
       ctx.fillRect(goal.x, goal.y, goal.width, goal.height);
 
@@ -233,7 +247,7 @@
       ctx.restore();
 
       // HUD
-      ctx.fillStyle = '#0';
+      ctx.fillStyle = '#fff';
       ctx.font = '20px sans-serif';
       ctx.fillText(`❤️ Lives: ${lives}`, 20, 30);
       ctx.fillText(`Level ${currentLevel + 1}/${levels.length}`, 20, 60);
