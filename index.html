@@ -178,8 +178,9 @@
       if (currentLevel >= levels.length) {
         alert("🎉 You completed all levels!");
         currentLevel = 0;
-        levels++;
+        lives = lives +1;
       }
+      
       resetPlayer();
     }
 
