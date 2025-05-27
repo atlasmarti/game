@@ -183,6 +183,7 @@
       lives = lives + 1;
       if (currentLevel >= levels.length) {
         alert("🎉 You completed all levels!");
+        lives = 3;
         currentLevel = 0;
       }
       
@@ -192,7 +193,6 @@
     function loseLife() {
       lives--;
       if (lives <= 0) {
-        lives = 3;
         alert("💀 Game Over!");
         lives = 3;
         currentLevel = 0;
