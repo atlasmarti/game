@@ -9,7 +9,7 @@
     body {
       margin: 0;
       overflow: hidden;
-      background: #000;
+
       background: #fffafa;
     }
     canvas {
@@ -29,7 +29,7 @@
     let lives = 3;
     let currentLevel = 0;
 
-    const gravity = 0.4;
+    const gravity = 0.3;
     const friction = 0.8;
 
     const player = {
@@ -77,18 +77,21 @@
   // Level 3
   {
     platforms: [
-      { x: 0, y: 450, width: 300, height: 20 },
-      { x: 350, y: 400, width: 30, height: 70 },
-      { x: 500, y: 350, width: 150, height: 20 },
-      { x: 700, y: 300, width: 100, height: 20 },
-      { x: 850, y: 250, width: 100, height: 20 },
-      { x: 1000, y: 200, width: 120, height: 20 }
+      { x: 0, y: 450, width: 240, height: 20 },
+      { x: 350, y: 450, width: 30, height: 20 },
+      { x: 500, y: 350, width: 60, height: 20 },
+      { x: 500, y: 100, width: 50, height: 20 },
+      { x: 700, y: 40, width: 70, height: 20 },
+      { x: 850, y: 500, width: 70, height: 20 },
+      { x: 850, y: 200, width: 70, height: 20 },
+      { x: 1000, y: 300, width: 120, height: 20 }
     ],
-    goal: { x: 1150, y: 140, width: 40, height: 60 },
+    goal: { x: 200, y: 150, width: 80, height: 20 },
     spikes: [
-      { x: 400, y: 380, width: 40, height: 20 },
-      { x: 720, y: 280, width: 40, height: 20 },
-      { x: 1020, y: 180, width: 40, height: 20 }
+      { x: 200, y: 430, width: 40, height: 20 },
+      { x: 880, y: 180, width: 40, height: 20 },
+      { x: 730, y: 20, width: 40, height: 20 },
+      { x: 1020, y: 280, width: 40, height: 20 }
     ]
   },
       // Level 4
@@ -150,6 +153,7 @@
 ];
 
     let cameraOffsetX = 0;
+    let cameraOffsetY = 500;
 
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowLeft') keys.left = true;
@@ -169,7 +173,7 @@
 
     function resetPlayer() {
       player.x = 100;
-      player.y = 100;
+      player.y = 150;
       player.dx = 0;
       player.dy = 0;
     }
@@ -297,14 +301,12 @@
       const level = levels[currentLevel];
 
       // Platforms
-      ctx.fillStyle = '#132';
       ctx.fillStyle = '#708090';
       for (let plat of level.platforms) {
         ctx.fillRect(plat.x, plat.y, plat.width, plat.height);
       }
 
       // Spikes
-      ctx.fillStyle = '#c00';
       ctx.fillStyle = '#ff6347';
       for (let spike of level.spikes) {
         ctx.beginPath();
