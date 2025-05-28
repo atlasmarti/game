@@ -345,7 +345,7 @@
         clearInterval(timerInterval); //when gameover
       }
 
-      score = Math.round((lives * (currentLevel + 1) * 100000) / (timerInterval * (deaths + 1))) //change 70 to time variable
+      score = Math.round((lives * (currentLevel + 1) * 100000) / (seconds * (deaths + 1))) //change 70 to time variable
       // HUD
       ctx.fillStyle = '#fff';
       ctx.font = '25px sans-serif';
