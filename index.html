@@ -329,9 +329,23 @@
       // Player
       ctx.fillStyle = '#ff5';
       ctx.fillRect(player.x, player.y, player.width, player.height);
-
       ctx.restore();
-      score = Math.round((lives * (currentLevel + 1) * 1000000) / (70 * deaths)) //change 70 to time variable
+
+      let seconds = 0;
+      let timerInterval;
+
+      function startTimer() {
+        timerInterval = setInterval(() => {
+          seconds++;
+          document.getElementById("timer").textContent = seconds;
+        }, 1000);
+      }
+      
+      function stopTimer() {
+        clearInterval(timerInterval); //when gameover
+      }
+
+      score = Math.round((lives * (currentLevel + 1) * 100000) / (timerInterval * (deaths + 1))) //change 70 to time variable
       // HUD
       ctx.fillStyle = '#fff';
       ctx.font = '25px sans-serif';
