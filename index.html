@@ -28,6 +28,7 @@
     let jumpPressed = false;
     let lives = 3;
     let currentLevel = 0;
+    let deaths = 0;
 
     const gravity = 0.3;
     const friction = 0.8;
@@ -192,6 +193,7 @@
 
     function loseLife() {
       lives--;
+      deaths++;
       if (lives <= 0) {
         alert("💀 Game Over!");
         lives = 3;
@@ -329,7 +331,7 @@
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
       ctx.restore();
-      score = Math.round((lives * (currentLevel + 1) * 10000000) / 70) //change 70 to time variable
+      score = Math.round((lives * (currentLevel + 1) * 1000000) / (70 * deaths)) //change 70 to time variable
       // HUD
       ctx.fillStyle = '#fff';
       ctx.font = '25px sans-serif';
