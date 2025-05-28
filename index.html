@@ -344,7 +344,7 @@
       function stopTimer() {
         clearInterval(timerInterval); //when gameover
       }
-
+      startTimer();
       score = Math.round((lives * (currentLevel + 1) * 100000) / (seconds * (deaths + 1))) //change 70 to time variable
       // HUD
       ctx.fillStyle = '#fff';
