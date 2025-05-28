@@ -329,7 +329,7 @@
       ctx.fillRect(player.x, player.y, player.width, player.height);
 
       ctx.restore();
-      score = (lives * (currentLevel + 1) * 10000) / 70 //change 70 to time variable
+      score = Math.round((lives * (currentLevel + 1) * 10000) / 70) //change 70 to time variable
       // HUD
       ctx.fillStyle = '#fff';
       ctx.font = '25px sans-serif';
